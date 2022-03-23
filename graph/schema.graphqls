@@ -1,0 +1,71 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+"Represents a connection between two users. A connection only exists when the approving user approves a request from a requesting user"
+type Connection {
+  id: ID! # UUID
+  requester: User!
+  approver: User!
+  createdAt: String!
+}
+
+"Represents a request made by a user which has not been approved yet. A request will not exists if it has been addressed - either denied or accepted."
+type ConnectionRequest {
+  id: ID!
+  requester: User!
+  approver: User!
+  createdAt: String!
+}
+
+"A User in the database"
+type User {
+  id: ID! # UUID
+  firstName: String!
+  lastName: String!
+  phoneNumber: String! # probably need to verify these
+  dateOfBirth: String!
+  organDonor: Boolean
+  medicalInfo: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Query {
+  user(input: ID!): User
+  connections(input: ID!): [Connection]
+  requests(input: ID!): [ConnectionRequest]
+}
+
+"A new user to add to the database"
+input NewUser {
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  dateOfBirth: String!
+  organDonor: Boolean
+  medicalInfo: String
+}
+
+"A new request for a user to be added to another user's network."
+input NewRequest {
+  requesterID: ID!
+  approverID: ID!
+}
+
+"ConnectionDecisionEnum is an enum to encapsulate the options a user has when responding to a request"
+enum ConnectionDecisionEnum {
+    APPROVE
+    DENY
+}
+
+input connectionDecision {
+  connectionRequestID: ID!
+  connectionDecision: ConnectionDecisionEnum
+}
+
+type Mutation {
+  addUser(input: NewUser!): User!
+  newRequest(input: NewRequest!): ConnectionRequest!
+  connectionDecision(input: connectionDecision!): Boolean!
+}
