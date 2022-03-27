@@ -1,5 +1,5 @@
 ----
--- The sfaety network schema
+-- The safety network schema
 --
 -- This defines the schema used by the main safety network DB
 --
