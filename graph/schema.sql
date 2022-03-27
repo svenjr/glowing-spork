@@ -1,7 +1,7 @@
 ----
--- The FATMAP bundler schema
+-- The sfaety network schema
 --
--- This defines the schema used by the offline tile bundler.
+-- This defines the schema used by the main safety network DB
 --
 
 CREATE EXTENSION IF NOT EXISTS postgis;
