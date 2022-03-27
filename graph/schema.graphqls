@@ -55,8 +55,9 @@ input NewRequest {
 
 "ConnectionDecisionEnum is an enum to encapsulate the options a user has when responding to a request"
 enum ConnectionDecisionEnum {
-    APPROVE
-    DENY
+  APPROVE
+  DENY
+  IGNORE
 }
 
 input connectionDecision {
