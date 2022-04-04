@@ -65,7 +65,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Connections func(childComplexity int, input string) int
 		Requests    func(childComplexity int, input string) int
-		User        func(childComplexity int, input string) int
+		User        func(childComplexity int, ksuid string) int
 	}
 
 	User struct {
@@ -87,7 +87,7 @@ type MutationResolver interface {
 	ConnectionDecision(ctx context.Context, input model.ConnectionDecision) (bool, error)
 }
 type QueryResolver interface {
-	User(ctx context.Context, input string) (*model.User, error)
+	User(ctx context.Context, ksuid string) (*model.User, error)
 	Connections(ctx context.Context, input string) ([]*model.Connection, error)
 	Requests(ctx context.Context, input string) ([]*model.ConnectionRequest, error)
 }
@@ -233,7 +233,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["input"].(string)), true
+		return e.complexity.Query.User(childComplexity, args["ksuid"].(string)), true
 
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
@@ -384,7 +384,7 @@ type ConnectionRequest {
 
 "A User in the database"
 type User {
-  id: ID! # UUID
+  id: String! # UID
   firstName: String!
   lastName: String!
   phoneNumber: String! # probably need to verify these
@@ -396,7 +396,7 @@ type User {
 }
 
 type Query {
-  user(input: ID!): User
+  user(ksuid: String!): User
   connections(input: ID!): [Connection]
   requests(input: ID!): [ConnectionRequest]
 }
@@ -419,8 +419,9 @@ input NewRequest {
 
 "ConnectionDecisionEnum is an enum to encapsulate the options a user has when responding to a request"
 enum ConnectionDecisionEnum {
-    APPROVE
-    DENY
+  APPROVE
+  DENY
+  IGNORE
 }
 
 input connectionDecision {
@@ -535,14 +536,14 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	if tmp, ok := rawArgs["ksuid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ksuid"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["ksuid"] = arg0
 	return args, nil
 }
 
@@ -1015,7 +1016,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, args["input"].(string))
+		return ec.resolvers.Query().User(rctx, args["ksuid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1210,7 +1211,7 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_firstName(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {

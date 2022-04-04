@@ -20,7 +20,7 @@ type ConnectionRequest {
 
 "A User in the database"
 type User {
-  id: ID! # UUID
+  id: String! # UID
   firstName: String!
   lastName: String!
   phoneNumber: String! # probably need to verify these
@@ -32,7 +32,7 @@ type User {
 }
 
 type Query {
-  user(input: ID!): User
+  user(ksuid: String!): User
   connections(input: ID!): [Connection]
   requests(input: ID!): [ConnectionRequest]
 }
@@ -55,8 +55,9 @@ input NewRequest {
 
 "ConnectionDecisionEnum is an enum to encapsulate the options a user has when responding to a request"
 enum ConnectionDecisionEnum {
-    APPROVE
-    DENY
+  APPROVE
+  DENY
+  IGNORE
 }
 
 input connectionDecision {

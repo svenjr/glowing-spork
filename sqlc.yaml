@@ -1,0 +1,11 @@
+version: 1
+packages:
+  - path: "database/internal"
+    name: "internal"
+    sql_package: "pgx/v4"
+    engine: "postgresql"
+    schema: "docker/db/schema.sql"
+    queries: "graph/query.sql"
+overrides:
+  - go_type: "github.com/segmentio/ksuid.KSUID"
+    db_type: "apollo.ksuid"

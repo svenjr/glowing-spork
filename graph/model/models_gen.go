@@ -64,16 +64,18 @@ type ConnectionDecisionEnum string
 const (
 	ConnectionDecisionEnumApprove ConnectionDecisionEnum = "APPROVE"
 	ConnectionDecisionEnumDeny    ConnectionDecisionEnum = "DENY"
+	ConnectionDecisionEnumIgnore  ConnectionDecisionEnum = "IGNORE"
 )
 
 var AllConnectionDecisionEnum = []ConnectionDecisionEnum{
 	ConnectionDecisionEnumApprove,
 	ConnectionDecisionEnumDeny,
+	ConnectionDecisionEnumIgnore,
 }
 
 func (e ConnectionDecisionEnum) IsValid() bool {
 	switch e {
-	case ConnectionDecisionEnumApprove, ConnectionDecisionEnumDeny:
+	case ConnectionDecisionEnumApprove, ConnectionDecisionEnumDeny, ConnectionDecisionEnumIgnore:
 		return true
 	}
 	return false
