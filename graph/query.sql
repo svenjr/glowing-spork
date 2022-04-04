@@ -1,23 +1,23 @@
 -- name: GetUser :one
-SELECT * FROM users
+SELECT * FROM "apollo"."users"
 WHERE ksuid = $1 LIMIT 1;
 
 -- name: ListConnections :many
-SELECT * FROM connections
+SELECT * FROM "apollo"."connections"
 WHERE requester_id OR approver_id = $1;
 
 -- name: ListRequestsIn :many
-SELECT * FROM requests
+SELECT * FROM "apollo"."requests"
 WHERE approver_id = $1
 ORDER BY created_at;
 
 -- name: ListRequestsOut :many
-SELECT * FROM requests
+SELECT * FROM "apollo"."requests"
 WHERE requester_id = $1
 ORDER BY created_at;
 
 -- name: CreateUser :one
-INSERT INTO users (
+INSERT INTO "apollo"."users" (
   first_name,
   last_name,
   phone,
@@ -31,7 +31,7 @@ INSERT INTO users (
 RETURNING *;
 
 -- name: CreateConnection :one
-INSERT INTO connections (
+INSERT INTO "apollo"."connections" (
   requester_id,
   approver_id
 ) VALUES (
@@ -40,7 +40,7 @@ INSERT INTO connections (
 RETURNING *;
 
 -- name: CreateRequest :one
-INSERT INTO requests (
+INSERT INTO "apollo"."requests" (
   requester_id,
   approver_id
 ) VALUES (
@@ -59,14 +59,14 @@ RETURNING *;
 -- )
 
 -- name: DeleteUser :one
-DELETE FROM users
-WHERE ksuid = $1;
+DELETE FROM "apollo"."users"
+WHERE ksuid = $1 RETURNING ksuid;
 
 -- name: DeleteConnection :one
-DELETE FROM connections
+DELETE FROM "apollo"."connections"
 WHERE approver_id = $1
-OR requester_id = $1;
+OR requester_id = $1 RETURNING id;
 
 -- name: DeleteRequest :one
-DELETE FROM requests
-WHERE approver_id = $1;
+DELETE FROM "apollo"."requests"
+WHERE approver_id = $1 RETURNING id;

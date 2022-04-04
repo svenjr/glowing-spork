@@ -1,16 +1,14 @@
 version: "3.4"
-
 services:
-  db:
-    hostname: db
-    build:
-      context: ./docker/db
-    volumes:
-      - ./:/src
-    working_dir: /src/
-    ports:
-      - 5434:5432
+  postgres:
+    image: "postgres"
+    container_name: "postgres"
     environment:
       POSTGRES_USER: apollo
       POSTGRES_PASSWORD: apollo
       POSTGRES_DB: apollo
+    ports:
+      - 5432:5432
+
+# To access this, use
+# docker exec -it postgres psql postgres://apollo:apollo@localhost:5432/apollo
